@@ -164,6 +164,26 @@ function isExternalHref(href: string) {
   return /^(https?:|mailto:|tel:)/i.test(href);
 }
 
+function decodeHrefPath(href: string) {
+  let decodedHref = href;
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const nextValue = decodeURI(decodedHref);
+
+      if (nextValue === decodedHref) {
+        break;
+      }
+
+      decodedHref = nextValue;
+    } catch {
+      break;
+    }
+  }
+
+  return decodedHref;
+}
+
 function toFileRoute(relativePath: string) {
   return `/files/${relativePath
     .split("/")
@@ -176,10 +196,11 @@ export function resolveNoteHref(note: NoteSummary, href: string) {
     return href;
   }
 
+  const decodedHref = decodeHrefPath(href);
   const notePath = normalizeSlashes(note.relativePath);
   const sourceDirectory = path.posix.dirname(notePath);
   const resolvedRelativePath = path.posix
-    .resolve("/", sourceDirectory, href)
+    .resolve("/", sourceDirectory, decodedHref)
     .slice(1);
   const [topLevelDirectory] = resolvedRelativePath.split("/");
 

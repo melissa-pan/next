@@ -28,43 +28,19 @@ export function NotesDashboard({ notes }: DashboardProps) {
 
   return (
     <div className="page-shell">
-      <section className="hero">
-        <div>
-          <p className="eyebrow">NEXT meetup knowledge base</p>
-          <h1>Weekly notes, research tips, and a searchable archive.</h1>
-          <p className="hero-copy">
-            This dashboard pulls directly from the `Notes/` folder, so each new
-            markdown file becomes part of the site automatically.
-          </p>
-        </div>
-
-        <div className="hero-panel">
-          <div>
-            <span className="stat-value">{notes.length}</span>
-            <span className="stat-label">uploaded sessions</span>
-          </div>
-          <div>
-            <span className="stat-value">Keyword</span>
-            <span className="stat-label">search ready now</span>
-          </div>
-          <div>
-            <span className="stat-value">Semantic</span>
-            <span className="stat-label">can be added next</span>
-          </div>
-        </div>
-      </section>
+      <header className="page-header">
+        <h1>NEXT Notes</h1>
+      </header>
 
       <section className="search-section">
-        <label className="search-label" htmlFor="keyword-search">
-          Search across titles, summaries, headings, and full note text
-        </label>
         <input
           id="keyword-search"
           className="search-input"
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Try: Claude Code, experiments, planning, evaluation..."
+          placeholder="Search notes"
+          aria-label="Search notes"
         />
         <p className="search-meta">
           {filteredNotes.length} result{filteredNotes.length === 1 ? "" : "s"}

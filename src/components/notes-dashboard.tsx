@@ -18,12 +18,15 @@ export function NotesDashboard({ notes }: DashboardProps) {
 
   const filteredNotes = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
+    const queryTerms = normalizedQuery.split(/\s+/).filter(Boolean);
 
-    if (!normalizedQuery) {
+    if (queryTerms.length === 0) {
       return notes;
     }
 
-    return notes.filter((note) => note.searchableText.includes(normalizedQuery));
+    return notes.filter((note) =>
+      queryTerms.every((term) => note.searchableText.includes(term)),
+    );
   }, [notes, query]);
 
   return (

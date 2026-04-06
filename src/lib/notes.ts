@@ -23,6 +23,30 @@ function normalizeSlashes(value: string) {
   return value.split(path.sep).join("/");
 }
 
+function getBasePath() {
+  const configuredBasePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim();
+
+  if (!configuredBasePath || configuredBasePath === "/") {
+    return "";
+  }
+
+  return configuredBasePath.replace(/\/+$/, "");
+}
+
+function withBasePath(route: string) {
+  const basePath = getBasePath();
+
+  if (!basePath) {
+    return route;
+  }
+
+  if (route === "/") {
+    return `${basePath}/`;
+  }
+
+  return `${basePath}${route}`;
+}
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -185,10 +209,12 @@ function decodeHrefPath(href: string) {
 }
 
 function toFileRoute(relativePath: string) {
-  return `/files/${relativePath
-    .split("/")
-    .map((segment) => encodeURIComponent(segment))
-    .join("/")}`;
+  return withBasePath(
+    `/files/${relativePath
+      .split("/")
+      .map((segment) => encodeURIComponent(segment))
+      .join("/")}`,
+  );
 }
 
 export function resolveNoteHref(note: NoteSummary, href: string) {
@@ -214,7 +240,7 @@ export function resolveNoteHref(note: NoteSummary, href: string) {
     );
 
     if (linkedNote) {
-      return `/notes/${linkedNote.slug}`;
+      return withBasePath(`/notes/${linkedNote.slug}/`);
     }
   }
 

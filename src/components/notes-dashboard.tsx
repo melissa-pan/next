@@ -84,7 +84,7 @@ export function NotesDashboard({ notes }: DashboardProps) {
             <h2>No notes match that keyword yet.</h2>
             <p>
               Try a broader term, or add more weekly markdown files into the
-              `Notes/` folder.
+              `next-notes/Notes/` folder.
             </p>
           </div>
         )}

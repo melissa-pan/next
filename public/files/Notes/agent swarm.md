@@ -4,7 +4,7 @@ Date: March 23, 2026
 
 These notes summarize the slide deck **Hive** and reorganize it into a clear, concise guide for PhD students, researchers, and research engineers.
 
-Tthe original slides is available here: [Hive.pdf](../Slides/Hive.pdf)
+Tthe original slides is available here: [Hive.pdf](../next-notes/Slides/Hive.pdf)
 
 ---
 

@@ -4,7 +4,7 @@ Date: March 9, 2026
 
 These notes summarize the talk **Using Claude Code to move faster** and reorganize it into a clear, concise guide for PhD students and researchers.
 
-Tthe original slides is available here: [Slides/Move faster by Claude Code.pdf](../Slides/Move%20faster%20by%20Claude%20Code.pdf)
+Tthe original slides is available here: [Slides/Move faster by Claude Code.pdf](../next-notes/Slides/Move%20faster%20by%20Claude%20Code.pdf)
 
 
 ---

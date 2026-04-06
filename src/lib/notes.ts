@@ -15,8 +15,8 @@ export type NoteSummary = {
   readingTime: string;
 };
 
-const WORKSPACE_DIRECTORY = process.cwd();
-const NOTES_DIRECTORY = path.join(process.cwd(), "Notes");
+const CONTENT_ROOT_DIRECTORY = path.join(process.cwd(), "next-notes");
+const NOTES_DIRECTORY = path.join(CONTENT_ROOT_DIRECTORY, "Notes");
 const LINKABLE_DIRECTORIES = new Set(["Notes", "Slides"]);
 
 function normalizeSlashes(value: string) {
@@ -158,7 +158,7 @@ export const getAllNotes = cache((): NoteSummary[] => {
     const body = fs.readFileSync(fullPath, "utf8");
     const title = getTitle(fileName, body);
     const relativePath = normalizeSlashes(
-      path.relative(WORKSPACE_DIRECTORY, fullPath),
+      path.relative(CONTENT_ROOT_DIRECTORY, fullPath),
     );
 
     return {

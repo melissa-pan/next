@@ -1,21 +1,23 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const workspaceDirectory = process.cwd();
-const publicFilesDirectory = path.join(workspaceDirectory, "public", "files");
-const rootDirectoriesToCopy = ["Notes", "Slides"];
+const repoRoot = process.cwd();
+const contentRoot = path.join(repoRoot, "next-notes");
+const publicFilesRoot = path.join(repoRoot, "public", "files");
+const syncedDirectories = ["Notes", "Slides"];
 
-fs.mkdirSync(publicFilesDirectory, { recursive: true });
+fs.mkdirSync(publicFilesRoot, { recursive: true });
 
-for (const directoryName of rootDirectoriesToCopy) {
-  const sourceDirectory = path.join(workspaceDirectory, directoryName);
-  const destinationDirectory = path.join(publicFilesDirectory, directoryName);
+for (const directoryName of syncedDirectories) {
+  const sourceDirectory = path.join(contentRoot, directoryName);
+  const targetDirectory = path.join(publicFilesRoot, directoryName);
 
-  fs.rmSync(destinationDirectory, { force: true, recursive: true });
+  fs.rmSync(targetDirectory, { force: true, recursive: true });
 
   if (!fs.existsSync(sourceDirectory)) {
     continue;
   }
 
-  fs.cpSync(sourceDirectory, destinationDirectory, { recursive: true });
+  fs.mkdirSync(path.dirname(targetDirectory), { recursive: true });
+  fs.cpSync(sourceDirectory, targetDirectory, { recursive: true });
 }

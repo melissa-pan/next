@@ -55,7 +55,6 @@ export default async function NotePage({ params }: NotePageProps) {
           <p className="eyebrow">{note.sessionLabel}</p>
           <h1>{note.title}</h1>
           <div className="note-meta">
-            <span>{note.updatedAt}</span>
             <span>{note.readingTime}</span>
             <span>{note.fileName}</span>
           </div>

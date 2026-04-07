@@ -17,7 +17,9 @@ export type NoteSummary = {
 
 const CONTENT_ROOT_DIRECTORY = path.join(process.cwd(), "next-notes");
 const NOTES_DIRECTORY = path.join(CONTENT_ROOT_DIRECTORY, "Notes");
+const TRANSCRIPTS_DIRECTORY = path.join(CONTENT_ROOT_DIRECTORY, "Transcripts");
 const LINKABLE_DIRECTORIES = new Set(["Notes", "Slides", "Transcripts"]);
+const MARKDOWN_DIRECTORIES = new Set(["Notes", "Transcripts"]);
 
 function normalizeSlashes(value: string) {
   return value.split(path.sep).join("/");
@@ -129,21 +131,29 @@ function getReadingTime(content: string) {
   return `${minutes} min read`;
 }
 
-function getSessionLabel(index: number) {
-  return `Session ${index + 1}`;
+function getCollectionLabel(directoryName: string, index: number) {
+  return directoryName === "Transcripts"
+    ? `Transcript ${index + 1}`
+    : `Session ${index + 1}`;
 }
 
-export const getAllNotes = cache((): NoteSummary[] => {
-  if (!fs.existsSync(NOTES_DIRECTORY)) {
+function getContentDirectory(directoryName: "Notes" | "Transcripts") {
+  return directoryName === "Transcripts" ? TRANSCRIPTS_DIRECTORY : NOTES_DIRECTORY;
+}
+
+function getAllMarkdownContent(directoryName: "Notes" | "Transcripts"): NoteSummary[] {
+  const contentDirectory = getContentDirectory(directoryName);
+
+  if (!fs.existsSync(contentDirectory)) {
     return [];
   }
 
   const usedSlugs = new Set<string>();
   const markdownFiles = fs
-    .readdirSync(NOTES_DIRECTORY)
+    .readdirSync(contentDirectory)
     .filter((file) => file.toLowerCase().endsWith(".md"))
     .map((fileName) => {
-      const fullPath = path.join(NOTES_DIRECTORY, fileName);
+      const fullPath = path.join(contentDirectory, fileName);
       const stat = fs.statSync(fullPath);
 
       return {
@@ -174,14 +184,26 @@ export const getAllNotes = cache((): NoteSummary[] => {
         month: "short",
         day: "numeric",
       }),
-      sessionLabel: getSessionLabel(index),
+      sessionLabel: getCollectionLabel(directoryName, index),
       readingTime: getReadingTime(body),
     };
   });
+}
+
+export const getAllNotes = cache((): NoteSummary[] => {
+  return getAllMarkdownContent("Notes");
 });
 
 export function getNoteBySlug(slug: string) {
   return getAllNotes().find((note) => note.slug === slug);
+}
+
+export const getAllTranscripts = cache((): NoteSummary[] => {
+  return getAllMarkdownContent("Transcripts");
+});
+
+export function getTranscriptBySlug(slug: string) {
+  return getAllTranscripts().find((transcript) => transcript.slug === slug);
 }
 
 function isExternalHref(href: string) {
@@ -217,6 +239,34 @@ function toFileRoute(relativePath: string) {
   );
 }
 
+function resolveMarkdownRoute(relativePath: string) {
+  const [topLevelDirectory] = relativePath.split("/");
+
+  if (!MARKDOWN_DIRECTORIES.has(topLevelDirectory)) {
+    return null;
+  }
+
+  if (topLevelDirectory === "Transcripts") {
+    const linkedTranscript = getAllTranscripts().find(
+      (candidate) => candidate.relativePath === relativePath,
+    );
+
+    if (linkedTranscript) {
+      return withBasePath(`/transcripts/${linkedTranscript.slug}/`);
+    }
+  }
+
+  const linkedNote = getAllNotes().find(
+    (candidate) => candidate.relativePath === relativePath,
+  );
+
+  if (linkedNote) {
+    return withBasePath(`/notes/${linkedNote.slug}/`);
+  }
+
+  return null;
+}
+
 export function resolveNoteHref(note: NoteSummary, href: string) {
   if (!href || href.startsWith("#") || isExternalHref(href)) {
     return href;
@@ -235,12 +285,10 @@ export function resolveNoteHref(note: NoteSummary, href: string) {
   }
 
   if (resolvedRelativePath.toLowerCase().endsWith(".md")) {
-    const linkedNote = getAllNotes().find(
-      (candidate) => candidate.relativePath === resolvedRelativePath,
-    );
+    const markdownRoute = resolveMarkdownRoute(resolvedRelativePath);
 
-    if (linkedNote) {
-      return withBasePath(`/notes/${linkedNote.slug}/`);
+    if (markdownRoute) {
+      return markdownRoute;
     }
   }
 

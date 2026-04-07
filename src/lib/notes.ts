@@ -17,7 +17,7 @@ export type NoteSummary = {
 
 const CONTENT_ROOT_DIRECTORY = path.join(process.cwd(), "next-notes");
 const NOTES_DIRECTORY = path.join(CONTENT_ROOT_DIRECTORY, "Notes");
-const LINKABLE_DIRECTORIES = new Set(["Notes", "Slides"]);
+const LINKABLE_DIRECTORIES = new Set(["Notes", "Slides", "Transcripts"]);
 
 function normalizeSlashes(value: string) {
   return value.split(path.sep).join("/");

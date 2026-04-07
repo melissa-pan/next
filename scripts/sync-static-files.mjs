@@ -4,7 +4,7 @@ import path from "node:path";
 const repoRoot = process.cwd();
 const contentRoot = path.join(repoRoot, "next-notes");
 const publicFilesRoot = path.join(repoRoot, "public", "files");
-const syncedDirectories = ["Notes", "Slides"];
+const syncedDirectories = ["Notes", "Slides", "Transcripts"];
 
 fs.mkdirSync(publicFilesRoot, { recursive: true });
 

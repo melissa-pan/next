@@ -57,7 +57,6 @@ export function NotesDashboard({ notes }: DashboardProps) {
             <Link className="note-card" href={`/notes/${note.slug}`} key={note.slug}>
               <div className="card-topline">
                 <span>{note.sessionLabel}</span>
-                <span>{note.updatedAt}</span>
               </div>
 
               <div className="card-body">
